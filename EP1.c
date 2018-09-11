@@ -32,7 +32,7 @@ typedef struct s {
 void fraseParaLista(NO* *inicio, char frase[]) {
 	NO* novo;
 	int i;
-	for(i = strlen(frase); i >= 0; i--) {
+	for(i = strlen(frase)-1; i >= 0; i--) {
 		novo = (NO*) malloc(sizeof(NO));
 		novo->letra = frase[i];
 		novo->prox = *inicio;
@@ -102,13 +102,13 @@ NO* codificar(NO* frase) {
 		NO* inicio = final;
 		NO* fim = NULL;
 		if(!ehVogal(vogal1->letra)){
-			while(vogal2 && vogal2->prox && !ehVogal(vogal2->letra)) vogal2 = vogal2->prox;
+			while(vogal2 && !ehVogal(vogal2->letra)) vogal2 = vogal2->prox;
 			NO* p = passo1(vogal1, vogal2, &fim);
 			if(inicio) inicio->prox = p;
 			inicio = p;
 		} else {
 			vogal2 = vogal2->prox;
-			while(vogal2 && vogal2->prox && !ehVogal(vogal2->letra)) vogal2 = vogal2->prox;
+			if(!ehVogal(vogal2->letra)) while(vogal2 && !ehVogal(vogal2->letra)) vogal2 = vogal2->prox;
 			NO* novo1 = (NO*) malloc(sizeof(NO));
 			novo1->letra = vogal1->letra;
 			novo1->prox = passo1(vogal1->prox, vogal2, &fim);
@@ -133,7 +133,7 @@ NO* codificar(NO* frase) {
 int main() {
 	NO* p = NULL;
 	char frase[500];
-	strcpy(frase, "ESTRUTURA DE DADOS.");
+	strcpy(frase, "AEIOU");
 	fraseParaLista(&p, frase);
 
 	exibir(p);
