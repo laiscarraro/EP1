@@ -51,21 +51,32 @@ void exibir(NO* inicio) {
 }
 
 //Inverter a frase inteira, q seria o passo 2
-NO* inverter(NO* comeco, NO* fim, NO* anterior, NO* posterior) {
+NO* passo2(NO* frase) {
 	NO* inicio = NULL;
-	NO* p = comeco;
-	while(p != fim) {
+	NO* p = frase;
+	while(p) {
 		NO* novo = (NO*) malloc(sizeof(NO));
 		novo->letra = p->letra;
 		novo->prox = inicio;
 		inicio = novo;
 		p = p->prox;
 	}
-	if(anterior) anterior->prox = inicio;
-	if(posterior) fim->prox = posterior;
-	free(comeco);
-	free(fim);
 	return inicio;
+}
+
+NO* passo1(NO* vogal1, NO* vogal2) {
+	NO* resp = NULL;
+	NO* ult = NULL;
+	while(vogal1 != vogal2){
+		vogal1 = vogal1->prox;
+		NO* novo = (NO*) malloc(sizeof(NO));
+		novo->letra = vogal1->letra;
+		novo->prox = NULL;
+		if(!resp) resp = novo;
+		else ult->prox = novo;
+		ult = novo;
+	}
+	return resp;
 }
 
 NO* codificar(NO* frase) {
@@ -81,10 +92,11 @@ int main() {
 	fraseParaLista(&p, frase);
 
 	NO* teste = p;
-	NO* h = p->prox;
+	NO* vogal1 = teste->prox->prox;
+	NO* vogal2 = teste->prox->prox->prox->prox;
 
 	exibir(p);
 	printf("\n");
-	exibir(inverter(h, p, NULL, NULL));
+	exibir(passo1(vogal1, vogal2));
 	printf("\n");
 }
