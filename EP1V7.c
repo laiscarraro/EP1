@@ -6,8 +6,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include <ctype.h>
-#include <locale.h>
+#include<ctype.h>
+#include<locale.h>
 #define true 1
 #define false 0
 
@@ -61,20 +61,16 @@ void exibir(NO* inicio) {
 		//ispunct(a) && isalnum(a)){
 int ehVogal(char a) {
 	a = toupper(a);
-	printf("%c ",a);
 	if ((a !='B'&& a !='C'&& a !='D'&& a !='F'&& a !='G'&& a !='H'&& a !='J'&& a !='K'&& a !='L'&& a !='M'&& a !='N'&& 
 		a !='P'&& a !='Q'&& a !='R'&& a !='S'&& a !='T'&& a !='V'&& a !='X'&& a !='Y'&& a !='Z'&& a !='W') && 
 		isalpha(a) && a != ' '){//Testa pra ver se é um numero ou ponto
-		printf("Vogal\n");
 		return true;
 	} else {
-		printf("Não vogal\n");
 		return false;
 	}
 }
 
 NO* passo1Vogal(NO* n) {
-	printf("Iniciou o passo1V2 \n");
 	NO* x = n->prox;
 	NO* p = x->prox;
 	NO* t = p->prox;
@@ -136,29 +132,28 @@ NO* codificar(NO* frase) {
 
 	NO* j = vogal1->prox;
 	NO* b = vogal1->prox;
+
 	if(!vogal1->prox) return frase; //Só uma letra
 	while(ehVogal(vogal1->letra)&&!ehVogal(b->letra)&&b->prox)b=b->prox;//Avança na frase até encontrar uma vogal
 	
-	int andou = 0;
-	int primeira = 0;
+	int andou = 0; //controle para ver quantas nao vogais existem entre as vogais
+	int primeira = 0; //controle para ver se eh a primeira parte da frase
 
-	if (!ehVogal(vogal1->letra)){
-		
+	if (!ehVogal(vogal1->letra)){ //Se comeca com nao vogal
 	 	andou++;
-	 	primeira = 1;//Se comeca com consoante
-	}	
+	 	primeira = 1; //indica que ja passamos pelo comeco da frase
+	}
+
 	do {
-		while((!ehVogal(j->letra) && andou<2)){//Consulta pra ver se tem mais de 2 consoantes seguidas
-			// if(!j)andou++;
+		while(j && (!ehVogal(j->letra) && andou<2)){//Consulta pra ver se tem pelo menos 2 nao vogais seguidas
 			j = j->prox;
 			andou++;
-			printf("Procurando o espaço de 2 :: %i\n",andou);
 		}
-		if(andou == 2){
-			printf("tururuuuu\n");
-			if(!ehVogal(vogal1->letra)&&primeira == 1) { //Comeca com Consoante e termina com vogal
-				if (!b->prox) return inverteTudo(frase); //Sem vogal na frase, um monte de consoante
-			    while(j->prox && !ehVogal(j->letra)) j = j->prox;
+		if(andou == 2){ //Se existem pelo menos duas nao vogais entre a primeira letra e a ultima
+			if(!ehVogal(vogal1->letra) && primeira == 1) { //Se comeca com nao vogal e ja passamos pelo comeco da frase
+				while(b && !ehVogal(b->letra)) b = b->prox;
+				if (!b) return inverteTudo(frase); //Sem vogal na frase, um monte de nao vogal, so inverte tudo
+			    while(j->prox && !ehVogal(j->letra)) j = j->prox; 
 			    NO* ult = vogal1;
 			    while(ult->prox->prox != j && !ehVogal(ult->letra)) ult = ult->prox;
 			    frase = ult->prox;
@@ -167,7 +162,7 @@ NO* codificar(NO* frase) {
 			    vogal1 = frase;
 			    primeira = 0;
 		    }
-		    if(ehVogal(vogal1->letra)&&!ehVogal(b->letra)&&!b->prox){//Começa com vogal e termina com consoante
+		    if(ehVogal(vogal1->letra) && !ehVogal(b->letra) && !b->prox){//Começa com vogal e termina com nao vogal
 		    	vogal1=vogal1->prox;
 		    	frase->prox=inverteTudo(vogal1);	
 		    	return frase;
@@ -175,19 +170,13 @@ NO* codificar(NO* frase) {
 		    
 			j = passo1Vogal(vogal1);
 			andou = 0;
-			exibir(frase);
-			printf("\nInverteu %i\n", andou);
-			printf("*********\n" );
-			printf("Famosa Frase\n");
-			exibir(frase);
-			printf("\n*********\n" );
+
 		} else {//Quando tem só uma consoante entre 2 vogais
 			vogal1 = j;
-			j = j->prox;
+			if(j) j = j->prox;
 			andou = 0;
-			printf("\nNada mudou %i\n",andou);
 		} 
-	} while(j);
+	} while(j); //executa j+1 vezes
 	return frase;
 }
 
@@ -195,7 +184,7 @@ int main() {
 	NO* p = NULL;
 	char frase[500];
 	setlocale(LC_ALL,"pt_BR.UTF-8");
-	strcpy(frase, "ESTRUTURAS DE DADOS E MUITO LEGAL.");
+	// strcpy(frase, "ESTRUTURAS DE DADOS E MUITO LEGAL.");
 	// strcpy(frase, "a12345ei");
 	// strcpy(frase, "a12e");
 	// strcpy(frase, "ae");
@@ -205,11 +194,12 @@ int main() {
 	// strcpy(frase, "123"); 
 	// strcpy(frase, "a123456789");
 	// strcpy(frase, "123456789");
-	// strcpy(frase, "ai12");//nok
+	// strcpy(frase, "a12");//nok
 	// strcpy(frase, "12");	//nok
 	// strcpy(frase, "a2");	//nok
 	// strcpy(frase, "1");
 	// strcpy(frase, "a");
+	 strcpy(frase, "12345aei12345");
 
 
 	fraseParaLista(&p, frase);
