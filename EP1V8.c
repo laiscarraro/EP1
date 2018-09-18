@@ -1,7 +1,7 @@
 // chcp 65001 
 // cd C:\Users\USP\Desktop\CEx\EP1
-// gcc EP1V8.c -o EP1V8.exe
-// EP1V8.exe
+// gcc EP1V7.c -o EP1V7.exe
+// EP1V7.exe
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -69,37 +69,18 @@ int ehVogal(char a) {
 		return false;
 	}
 }
-	
 
 NO* passo1Vogal(NO* n) {
-	NO* x=n->prox;;
-	NO* l = n;
-	int k = 0;
-	exibir(n);
-	printf(" :gruuu\n");
-	// while(!ehVogal(l->letra)&&l)l=l->prox;
-	/*if (l->prox){
-		printf("\nAqui\n");
-		x = n;
-		return inverteTudo(x);
-		// return x;
-		k=1;
-	}else{
-		printf("\nAcola\n");
-		x = n->prox;
-	}*/
-	printf("\n");
-	exibir(x);
-	printf(" :praaa\n");
+	NO* x = n->prox;
 	NO* p = x->prox;
 	NO* t = p->prox;
 	if(!t) return p;
-	while(!ehVogal(t->letra)&&(t->prox)){ //invertendo as parada tudo
-		/*if (!t->prox)
-		{
-			printf("\nkkkkkkkk\n");
-			k=0;
-		}*/
+	NO* g;
+	g = (NO*) malloc(sizeof(NO));
+	g->letra = x->letra;
+	g->prox = NULL;
+	int k = 0;
+	while(!ehVogal(t->letra)&&t->prox){ //invertendo as parada tudo
 		p->prox = x;
 		x = p;
 		p = t;
@@ -167,12 +148,10 @@ NO* codificar(NO* frase) {
 		while(j && (!ehVogal(j->letra) && andou<2)){//Consulta pra ver se tem pelo menos 2 nao vogais seguidas
 			j = j->prox;
 			andou++;
-			printf("\nblungson\n");
 		}
 		if(andou == 2){ //Se existem pelo menos duas nao vogais entre a primeira letra e a ultima
 			if(!ehVogal(vogal1->letra) && primeira == 1) { //Se comeca com nao vogal e ja passamos pelo comeco da frase
-				printf("\npqaqui???\n");
-				while(b && !ehVogal(b->letra)) b = b->prox;//Anda até achar uma vogal
+				while(b && !ehVogal(b->letra)) b = b->prox;
 				if (!b) return inverteTudo(frase); //Sem vogal na frase, um monte de nao vogal, so inverte tudo
 			    while(j->prox && !ehVogal(j->letra)) j = j->prox; 
 			    NO* ult = vogal1;
@@ -183,30 +162,16 @@ NO* codificar(NO* frase) {
 			    vogal1 = frase;
 			    primeira = 0;
 		    }
-		    /* Tentando implementar isso sem que o caso 12345a pare de funcionar
-
-
-		    while (ehVogal(b->prox->letra)&&b)b=b->prox;
-		    exibir(b);
-		    printf(" :bv2\n");
-		    if (ehVogal(b->letra)){
-		    	b=b->prox;
-		    	while(!ehVogal(b->letra)&&b->prox) b=b->prox;
-		    	if (!b->prox){
-		    		exibir(frase);printf(" :frase\n");
-		    		exibir(vogal1);printf(" :vogal1\n");
-		    		vogal1=vogal1->prox;
-		    		frase->prox=inverteTudo(vogal1);	
-		    		return frase;
+		    if(ehVogal(vogal1->letra) && ((!ehVogal(b->letra) && !b->prox) || !j)){//Começa com vogal e termina com nao vogal
+		    	if(j) {
+		    	    vogal1=vogal1->prox;
+		    	    frase->prox=inverteTudo(vogal1);
+		    	} else {
+		    	    vogal1->prox = inverteTudo(vogal1->prox);
 		    	}
-		    }*/
-		    if(ehVogal(vogal1->letra) && !ehVogal(b->letra) && !b->prox){//Começa com vogal e termina com nao vogal
-		    	vogal1=vogal1->prox;
-		    	frase->prox=inverteTudo(vogal1);	
 		    	return frase;
 		    }
-		    exibir(b);
-		    printf(" :B\n");
+		    
 			j = passo1Vogal(vogal1);
 			andou = 0;
 
@@ -233,17 +198,24 @@ int main() {
 	// strcpy(frase, "123"); 
 	// strcpy(frase, "a123456789");
 	// strcpy(frase, "123456789");
-	// strcpy(frase, "a12");
-	// strcpy(frase, "12");
-	// strcpy(frase, "a2");
+	// strcpy(frase, "a12");//nok
+	// strcpy(frase, "12");	//nok
+	// strcpy(frase, "a2");	//nok
 	// strcpy(frase, "1");
 	// strcpy(frase, "a");
-	 strcpy(frase, "12345aei12345");//nok
+	// strcpy(frase, "5i12");
+     strcpy(frase, "PUTA QUE ME PARIU!");
 
 
 	fraseParaLista(&p, frase);
-	printf("\nResult dessa budega S2\n");
+	printf("Frase original: ");
+    exibir(p);
+    printf("\n");
+    printf("Apos o passo 1: ");
 	exibir(codificar(p));
+	printf("\n");
+	printf("Apos o passo 2: ");
+	exibir(inverteTudo(codificar(p)));
 	printf("\n");
 }
 
