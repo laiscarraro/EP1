@@ -1,3 +1,7 @@
+// cd C:\Users\USP\Desktop\AED1\EP2\EP2
+// gcc EP2.c -o EP2.exe
+// EP2.exe
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +22,7 @@ typedef struct s {
 char* nroUSP1();
 char* nroUSP2();
 char *grupo();
+void exibir(NO* p);
 
 // ######### ESCREVA O NUMERO DO SEU GRUPO AQUI, CONFORME LINK NA ESPECIFICACAO DO EP
 // ignore os warning to compilador, se houver
@@ -28,7 +33,7 @@ char* grupo() {
 // ######### ESCREVA O NROUSP DO PRIMEIRO INTEGRANTE AQUI
 // ignore os warning to compilador, se houver
 char* nroUSP1() {
-    return("0000000");
+    return("10391184");
 }
 
 // ######### ESCREVA O NROUSP DO SEGUNDO INTEGRANTE AQUI (OU DEIXE COM ZERO)
@@ -37,42 +42,69 @@ char* nroUSP2() {
     return("10687638");
 }
 
-NO* tirarSublistas(NO* inicio, NO* *ult) {
+NO* tirarSublistas(NO* *inicio, NO* *ult) {
     NO* subInicio = NULL;
-    NO* subUltimo;
-    NO* p = inicio;
-    while(p && p->prox) {
-        if(p->prox->tipo == 2) {
-            if(!subInicio) {
+    NO* subUltimo = NULL;
+    NO* p = *inicio;
+    NO* primeiro = *inicio;
+
+    while(p) {
+        if(primeiro->tipo == 2 && p->tipo == 1) { //So para quando o primeiro da lista e do tipo 2
+            *inicio = p;
+        }
+        if(p->tipo == 2) {
+            if(!subInicio) {//Primeira sublista encontrada
+                subInicio = p;
+                subUltimo = subInicio;
+            } else {
+                subUltimo->prox = p;
+                subUltimo = subUltimo->prox;
+            }
+        }
+        if(p->prox && p->prox->tipo == 2) {
+            if(!subInicio) {//Primeira sublista encontrada
                 subInicio = p->prox;
                 subUltimo = subInicio;
             } else {
                 subUltimo->prox = p->prox;
                 subUltimo = subUltimo->prox;
             }
-            if(!p->prox->prox) {
-                p->prox = NULL;
-                break;
-            }
-            p->prox = p->prox->prox;
         }
+        if(p->prox && !p->prox->prox) {
+            p->prox = NULL;
+            break;
+        }
+        if(p->prox) p->prox = p->prox->prox;
         p = p->prox;
     }
+    if(subUltimo) subUltimo->prox = NULL;
+    if(p) p->prox = NULL;
     *ult = p;
     return subInicio;
 }
 
+bool temSub(NO* inicio) {
+    while(inicio) {
+        if(inicio->tipo == 2) return true;
+        inicio = inicio->prox;
+    }
+    return false;
+}
+
 // o EP consiste em implementar esta funcao
 NO* listarChaves(NO* entrada) {
-    NO* ult;
-    NO* resp = tirarSublistas(entrada, &ult);
-    while(resp) {
-        ult->prox = resp->sublista;
-        while(ult->prox) ult = ult->prox;
-        resp = resp->prox;
+    NO* ult = NULL;
+    NO* resp;
+    while(temSub(entrada)) {
+        resp = tirarSublistas(&entrada, &ult);
+        while(resp) {
+            if(ult) {
+                ult->prox = resp->sublista;
+                while(ult->prox) ult = ult->prox;                
+            }
+            resp = resp->prox;
+        }
     }
-    resp = tirarSublistas(entrada, &ult);
-    ult->prox = resp->sublista;
     return entrada;
 }
 
@@ -105,26 +137,13 @@ void exibir(NO* p) {
 
 int main() {
 
-    NO* p = NULL;
+    NO* inicio = NULL;
 
-    // aqui vc pode incluir codigo para inserir elementos
-    // de teste na sua lista apontada por p
-
-    p = (NO*) malloc(sizeof(NO));
-    p->tipo = 1;
-    p->chave = 1;
-
-    NO* inicio = p;
-
-    p->prox = (NO*) malloc(sizeof(NO));
-    p = p->prox;
+    NO* p = (NO*) malloc(sizeof(NO));
     p->tipo = 2;
     NO* sub1 = p;
 
-    p->prox = (NO*) malloc(sizeof(NO));
-    p = p->prox;
-    p->tipo = 1;
-    p->chave = 2;
+    inicio = p;
 
     p->prox = (NO*) malloc(sizeof(NO));
     p = p->prox;
@@ -134,57 +153,52 @@ int main() {
     p->prox = (NO*) malloc(sizeof(NO));
     p = p->prox;
     p->tipo = 1;
-    p->chave = 3;
-
-    p->prox = (NO*) malloc(sizeof(NO));
-    p = p->prox;
-    p->tipo = 2;
-    NO* sub3 = p;
-
-    p->prox = (NO*) malloc(sizeof(NO));
-    p = p->prox;
-    p->tipo = 1;
-    p->chave = 4;
-
-    p->prox = (NO*) malloc(sizeof(NO));
-    p = p->prox;
-    p->tipo = 2;
-    NO* sub4 = p;
+    p->chave = 0;
+    p->prox = NULL;
 
     sub1->sublista = (NO*) malloc(sizeof(NO));
     sub1 = sub1->sublista;
-    sub1->tipo = 1;
-    sub1->chave = 5;
-
-    sub1->prox = (NO*) malloc(sizeof(NO));
-    sub1 = sub1->prox;
+    NO* sub3 = sub1;
     sub1->tipo = 2;
-    NO* sub5 = sub1;
 
     sub1->prox = (NO*) malloc(sizeof(NO));
     sub1 = sub1->prox;
     sub1->tipo = 1;
-    sub1->chave = 6;
+    sub1->chave = 1;
+
+    sub1->prox = (NO*) malloc(sizeof(NO));
+    sub1 = sub1->prox;
+    sub1->tipo = 1;
+    sub1->chave = 2;
+    sub1->prox = NULL;
 
     sub2->sublista = (NO*) malloc(sizeof(NO));
     sub2 = sub2->sublista;
     sub2->tipo = 1;
-    sub2->chave = 7;
+    sub2->chave = 3;
+    sub2->prox = NULL;
 
     sub3->sublista = (NO*) malloc(sizeof(NO));
     sub3 = sub3->sublista;
     sub3->tipo = 1;
-    sub3->chave = 8;
+    sub3->chave = 4;
+
+    sub3->prox = (NO*) malloc(sizeof(NO));
+    sub3 = sub3->prox;
+    sub3->tipo = 2;
+    NO* sub4 = sub3;
 
     sub3->prox = (NO*) malloc(sizeof(NO));
     sub3 = sub3->prox;
     sub3->tipo = 1;
-    sub3->chave = 9;
+    sub3->chave = 5;
+    sub3->prox = NULL;
 
-    sub5->sublista = (NO*) malloc(sizeof(NO));
-    sub5 = sub5->sublista;
-    sub5->tipo = 1;
-    sub5->chave = 10;
+    sub4->sublista = (NO*) malloc(sizeof(NO));
+    sub4 = sub4->sublista;
+    sub4->tipo = 1;
+    sub4->chave = 6;
+    sub4->prox = NULL; 
 
     // o EP sera testado com chamadas deste tipo
     exibir(listarChaves(inicio));
