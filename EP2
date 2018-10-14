@@ -109,7 +109,7 @@ bool temSub(NO* inicio) {
 NO* tirarSublistas(NO* *inicio) {
     NO* p = *inicio;
     NO* ant = NULL;
-    while(p->tipo != 1) p = p->prox;
+    while(p && p->tipo != 1) p = p->prox;
     *inicio = p;
     while(p) {
         if(p->tipo == 2) {
